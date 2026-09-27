@@ -1,0 +1,23 @@
+.DS_Store
+
+# Flutter
+app/.dart_tool/
+app/build/
+app/.idea/
+app/ios/Pods/
+app/macos/Pods/
+app/android/.gradle/
+
+# Backend
+backend/.venv/
+backend/.env
+backend/app.db
+backend/app.db-*
+backend/storage/
+backend/metrics/
+backend/.tools/
+backend/**/__pycache__/
+backend/**/*.pyc
+backend/.pytest_cache/
+backend/*service-account*.json
+backend/**/*service-account*.json

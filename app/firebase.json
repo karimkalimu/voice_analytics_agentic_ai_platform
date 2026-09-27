@@ -1,0 +1,1 @@
+{"flutter":{"platforms":{"ios":{"default":{"projectId":"voice-analytics-agentic-ai","appId":"1:453555739637:ios:c6e21783ec2cb42772debc","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"voice-analytics-agentic-ai","configurations":{"ios":"1:453555739637:ios:c6e21783ec2cb42772debc"}}}}}}

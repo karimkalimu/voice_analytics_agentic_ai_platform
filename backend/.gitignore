@@ -1,0 +1,12 @@
+.venv/
+.tools/
+.env
+__pycache__/
+*.pyc
+.DS_Store
+app.db
+app.db-*
+*firebase-adminsdk*.json
+storage/uploads/
+storage/transcripts/
+storage/users/
