@@ -16,6 +16,20 @@ class AggregateJobTests(WorkspaceCase):
         for field in ("professional_topics", "personal_topics", "upcoming_events"):
             self.assertEqual(taxonomy_schema["properties"][field]["items"]["maxLength"], 80)
 
+    def test_aggregate_taxonomy_normalizes_whitespace_and_duplicates(self):
+        result = aggregate_analysis.AggregateUserSynthesis.model_validate({
+            "summary": "Upcoming plans.",
+            "taxonomy": {
+                "professional_topics": [],
+                "personal_topics": [],
+                "upcoming_events": [
+                    " product  team meeting tomorrow ",
+                    "product team meeting tomorrow",
+                ],
+            },
+        })
+        self.assertEqual(result.taxonomy.upcoming_events, ["product team meeting tomorrow"])
+
     def synthesis_response(self, summary="The recordings discuss software and gardening."):
         return model_response(json.dumps({
             "overall_summary": summary,

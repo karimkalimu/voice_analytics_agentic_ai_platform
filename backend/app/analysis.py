@@ -23,6 +23,24 @@ class Taxonomy(BaseModel):
     personal_topics: list[TaxonomyLabel]
     upcoming_events: list[TaxonomyLabel]
 
+    @field_validator("professional_topics", "personal_topics", "upcoming_events", mode="before")
+    @classmethod
+    def normalize_labels(cls, labels):
+        if not isinstance(labels, list):
+            return labels
+        normalized = []
+        seen = set()
+        for label in labels:
+            if not isinstance(label, str):
+                normalized.append(label)
+                continue
+            canonical = " ".join(label.split())
+            key = canonical.casefold()
+            if key not in seen:
+                normalized.append(canonical)
+                seen.add(key)
+        return normalized
+
     @field_validator("professional_topics", "personal_topics", "upcoming_events")
     @classmethod
     def validate_labels(cls, labels):
