@@ -68,7 +68,7 @@ class TopicMentionsTests(WorkspaceCase):
         payloads = []
 
         def complete(tier, messages, response_format):
-            self.assertEqual(tier, "weak")
+            self.assertEqual(tier, "fast")
             self.assertEqual([message["role"] for message in messages], ["system", "user"])
             self.assertIn("untrusted user data", messages[0]["content"])
             self.assertNotIn(malicious, messages[0]["content"])

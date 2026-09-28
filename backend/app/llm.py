@@ -20,8 +20,8 @@ def structured_content(response):
     return content
 
 
-def tier_config(tier: Literal["weak", "medium", "strong"]):
-    if tier not in ("weak", "medium", "strong"):
+def tier_config(tier: Literal["fast", "quality"]):
+    if tier not in ("fast", "quality"):
         raise ValueError("Invalid LLM tier.")
     prefix = f"LLM_{tier.upper()}_"
     model = os.getenv(prefix + "MODEL")
@@ -32,7 +32,7 @@ def tier_config(tier: Literal["weak", "medium", "strong"]):
     return model, api_base, api_key
 
 
-def complete(tier: Literal["weak", "medium", "strong"], messages: list[dict[str, str]], response_format: dict):
+def complete(tier: Literal["fast", "quality"], messages: list[dict[str, str]], response_format: dict):
     model, api_base, api_key = tier_config(tier)
     if not api_key:
         raise RuntimeError(f"{tier} LLM tier is not configured.")

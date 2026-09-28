@@ -56,7 +56,7 @@ class LayerOne(BaseModel):
 
 
 def current_analysis_version():
-    model, base_url, _ = tier_config("medium")
+    model, base_url, _ = tier_config("quality")
     config = json.dumps([load_prompt("layer1"), model, base_url, LayerOne.model_json_schema()], sort_keys=True)
     digest = hashlib.sha256(config.encode()).hexdigest()[:16]
     return f"{os.getenv('LAYER1_VERSION') or '1'}:{digest}"
@@ -76,7 +76,7 @@ def analyze_file(file_id: int, transcript_path: Path):
             save_analysis(file_id, cached[0], cached[1], version)
         else:
             response = complete(
-                "medium",
+                "quality",
                 [
                     {"role": "system", "content": load_prompt("layer1")},
                     {"role": "user", "content": json.dumps({"transcript": transcript_path.read_text(encoding="utf-8")})},

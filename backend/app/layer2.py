@@ -35,7 +35,7 @@ def current_layer2_version(option: str, transcript_digest: str | None = None, co
     if option == "rms":
         identity = ["rms", "pcm16", "mono", 16000]
     else:
-        model, base_url, _ = tier_config("weak")
+        model, base_url, _ = tier_config("fast")
         option_config = (config or {}).get(option, {"unique_only": False} if option == "count_nouns" else {})
         identity = [transcript_digest, load_prompt(f"layer2_{option}"), model, base_url,
                     SCHEMAS[option].model_json_schema(), option_config]
@@ -51,7 +51,7 @@ def run_option(option: str, audio_path: Path, transcript_path: Path, config: dic
     if option in ("count_nouns", "topic_mentions"):
         content["configuration"] = config[option]
     response = complete(
-        "weak",
+        "fast",
         [{"role": "system", "content": load_prompt(f"layer2_{option}")},
          {"role": "user", "content": json.dumps(content)}],
         {"type": "json_schema", "json_schema": {"name": f"layer2_{option}", "strict": True,

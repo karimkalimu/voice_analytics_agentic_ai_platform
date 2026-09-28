@@ -51,7 +51,7 @@ class AggregateJobTests(WorkspaceCase):
         payloads = []
 
         def complete(tier, messages, response_format):
-            self.assertEqual(tier, "medium")
+            self.assertEqual(tier, "quality")
             self.assertEqual(response_format["json_schema"]["name"], "aggregate_user_summary")
             payload = json.loads(messages[1]["content"])
             payloads.append(payload)

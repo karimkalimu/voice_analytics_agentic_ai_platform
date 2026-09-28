@@ -1,4 +1,7 @@
 .DS_Store
+AI_full_stack_task.pdf
+backend/docs/AI_full_stack_task.docx
+.local-docs/
 
 # Flutter
 app/.dart_tool/

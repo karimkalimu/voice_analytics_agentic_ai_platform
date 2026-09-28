@@ -43,7 +43,7 @@ def contains_deterministic_profanity(transcript: str):
 def contextual_profanity(transcript: str):
     schema = ContentGuardrailResult.model_json_schema()
     response = complete(
-        "weak",
+        "fast",
         [{"role": "system", "content": load_prompt("audio_content_guardrail")},
          {"role": "user", "content": json.dumps({"transcript": transcript})}],
         {"type": "json_schema", "json_schema": {"name": "audio_content_guardrail",
@@ -55,6 +55,6 @@ def contextual_profanity(transcript: str):
 
 
 def content_policy_identity():
-    model, base_url, _ = tier_config("weak")
+    model, base_url, _ = tier_config("fast")
     return [POLICY_PATH.read_text(encoding="utf-8"), load_prompt("audio_content_guardrail"),
             ContentGuardrailResult.model_json_schema(), model, base_url]

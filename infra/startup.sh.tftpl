@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+readonly INSTALL_ROOT="/opt/voice-analytics"
+readonly BACKEND_DIR="$INSTALL_ROOT/backend"
+readonly SERVICE_USER="voiceai"
+readonly REPOSITORY_URL="https://github.com/karimkalimu/voice_analytics_agentic_ai_platform.git"
+readonly REPOSITORY_REF="${repository_ref}"
+readonly BOOTSTRAP_STATE_DIR="/var/lib/voice-analytics"
+
+export DEBIAN_FRONTEND=noninteractive
+
+mkdir -p "$BOOTSTRAP_STATE_DIR"
+exec > >(tee -a "$BOOTSTRAP_STATE_DIR/bootstrap.log" | logger -t voice-analytics-bootstrap) 2>&1
+
+if [ -f "$BOOTSTRAP_STATE_DIR/complete" ]; then
+  exit 0
+fi
+
+apt-get update
+apt-get install -y git
+
+if ! id "$SERVICE_USER" >/dev/null 2>&1; then
+  useradd --system --create-home --shell /bin/bash "$SERVICE_USER"
+fi
+
+if [ -e "$INSTALL_ROOT" ]; then
+  rm -rf "$INSTALL_ROOT"
+fi
+
+git clone "$REPOSITORY_URL" "$INSTALL_ROOT"
+git -C "$INSTALL_ROOT" checkout "$REPOSITORY_REF"
+cd "$BACKEND_DIR"
+./ubuntu_setup.sh
+
+chown -R "$SERVICE_USER:$SERVICE_USER" "$INSTALL_ROOT"
+chmod 0750 "$INSTALL_ROOT" "$BACKEND_DIR"
+
+cat >/etc/systemd/system/voice-analytics-api.service <<'UNIT'
+[Unit]
+Description=Voice Analytics FastAPI POC
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=voiceai
+Group=voiceai
+WorkingDirectory=/opt/voice-analytics/backend
+ExecStart=/opt/voice-analytics/backend/run_api.sh
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/opt/voice-analytics/backend
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+
+cat >/etc/systemd/system/voice-analytics-tusd.service <<'UNIT'
+[Unit]
+Description=Voice Analytics tusd POC
+Wants=network-online.target voice-analytics-api.service
+After=network-online.target voice-analytics-api.service
+
+[Service]
+Type=simple
+User=voiceai
+Group=voiceai
+WorkingDirectory=/opt/voice-analytics/backend
+ExecStart=/opt/voice-analytics/backend/run_tusd.sh
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+ReadWritePaths=/opt/voice-analytics/backend
+
+[Install]
+WantedBy=multi-user.target
+UNIT
+
+systemctl daemon-reload
+touch "$BOOTSTRAP_STATE_DIR/complete"
+
+printf 'Bootstrap complete. Install backend/.env and Firebase credentials, then enable the services.\n'

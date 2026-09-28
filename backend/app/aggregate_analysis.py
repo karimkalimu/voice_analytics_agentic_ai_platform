@@ -150,7 +150,7 @@ def bounded_batches(records: list[dict]):
 
 def synthesize_batch(records: list[dict]):
     response = complete(
-        "medium",
+        "quality",
         [{"role": "system", "content": load_prompt("aggregate_analysis")},
          {"role": "user", "content": json.dumps({"records": records}, ensure_ascii=False)}],
         {"type": "json_schema", "json_schema": {"name": "aggregate_analysis", "strict": True,
@@ -174,7 +174,7 @@ def synthesize_records(records: list[dict]):
 
 def synthesize_group_batch(records: list[dict]):
     response = complete(
-        "medium",
+        "quality",
         [{"role": "system", "content": load_prompt("aggregate_group_summary")},
          {"role": "user", "content": json.dumps({"records": records}, ensure_ascii=False)}],
         {"type": "json_schema", "json_schema": {"name": "aggregate_group_summary", "strict": True,
@@ -195,7 +195,7 @@ def synthesize_group_records(records: list[dict]):
 
 def synthesize_user_batch(records: list[dict]):
     response = complete(
-        "medium",
+        "quality",
         [{"role": "system", "content": load_prompt("aggregate_user_summary")},
          {"role": "user", "content": json.dumps({"records": records}, ensure_ascii=False)}],
         {"type": "json_schema", "json_schema": {"name": "aggregate_user_summary", "strict": True,
