@@ -3,6 +3,7 @@ import json
 import logging
 import os
 from pathlib import Path
+from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
@@ -12,12 +13,15 @@ from app.llm import ProviderRefusal, complete, structured_content, tier_config
 from app.prompts import load_prompt
 
 
+TaxonomyLabel = Annotated[str, Field(min_length=1, max_length=80)]
+
+
 class Taxonomy(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
 
-    professional_topics: list[str]
-    personal_topics: list[str]
-    upcoming_events: list[str]
+    professional_topics: list[TaxonomyLabel]
+    personal_topics: list[TaxonomyLabel]
+    upcoming_events: list[TaxonomyLabel]
 
     @field_validator("professional_topics", "personal_topics", "upcoming_events")
     @classmethod

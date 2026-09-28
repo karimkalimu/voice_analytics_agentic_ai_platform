@@ -10,6 +10,12 @@ from support import WorkspaceCase, model_response
 
 
 class AggregateJobTests(WorkspaceCase):
+    def test_taxonomy_schema_exposes_label_length_limit(self):
+        schema = aggregate_analysis.AggregateUserSynthesis.model_json_schema()
+        taxonomy_schema = schema["$defs"]["Taxonomy"]
+        for field in ("professional_topics", "personal_topics", "upcoming_events"):
+            self.assertEqual(taxonomy_schema["properties"][field]["items"]["maxLength"], 80)
+
     def synthesis_response(self, summary="The recordings discuss software and gardening."):
         return model_response(json.dumps({
             "overall_summary": summary,
